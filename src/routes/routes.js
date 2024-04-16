@@ -72,7 +72,7 @@ routes.delete('/cursos/:id', (req,res) => {
         where: {
             id: id
         }
-    }) // DELETE cursos from cursos where id = 1
+    })
   
     res.status(204).json({})
 })
