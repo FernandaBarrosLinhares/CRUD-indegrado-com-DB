@@ -17,5 +17,8 @@
     "mysql2": "^3.9.4",
     "pg": "^8.11.5",
     "sequelize": "^6.37.2"
+  },
+  "devDependencies": {
+    "@types/debug": "^4.1.12"
   }
 }
