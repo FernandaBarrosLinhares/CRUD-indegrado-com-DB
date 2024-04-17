@@ -6,5 +6,6 @@
 //         type: DataTypes.STRING,
 //     },
    
+// })
 
 // module.exports = Professor

@@ -1,13 +1,16 @@
 const {Router} = require('express');
+const Professor = require('../models/Professor')
+const Curso = require('../models/Curso')
 
 const routes = new Router()
+
+module.exports = routes;
 
 
 routes.get('/bem_vindo', (req, res) => {
     res.json('Bem vindo');
     })
 
-module.exports = routes;
 
 routes.post('/cursos', async (req, res) => {
     try {
