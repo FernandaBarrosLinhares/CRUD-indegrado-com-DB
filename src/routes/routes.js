@@ -80,4 +80,72 @@ routes.delete('/cursos/:id', (req,res) => {
     res.status(204).json({})
 })
 
+//falta testar
+
+routes.post('/professores', async (req, res) => {
+
+    try {
+        const nome = req.body.nome;
+
+        if(!nome) {
+            return res.status(400).json({messagem: "O nome é obrigatório" })
+        }
+
+        const professor = await Professor.create({
+            nome: nome
+           
+        })
+
+        res.status(201).json(professor)
+    } catch (error) {
+        console.log(error.message)
+        res.status(500).json({ error: 'Não possível cadastrar o professor' })
+    }
+
+})
+
+routes.get('/professores', async (req, res) => {
+    let params = {}
+
+    if(req.query.nome)  {
+        params = {...params, nome: req.query.nome}
+    }
+
+    const professores = await Professor.findAll({
+        where: params
+    })
+
+    res.json(professores)
+})
+
+routes.put('/professores/:id', async (req, res) => {
+    const id = req.params.id
+
+    const professor = await Professor.findByPk(id)
+
+    if(!professor) {
+        return res.status(404).json({mensagem: 'Professor não encontraddo'})
+    }
+    professor.update(req.body)
+
+    await professor.save()
+
+    res.json(professor)
+})
+
+routes.delete('/professores/:id', (req,res) => {
+    const {id} =  req.params
+
+    Professor.destroy({
+        where: {
+            id: id
+        }
+    })
+  
+    res.status(204).json({})
+})
+
+
+
+
 module.exports = routes
