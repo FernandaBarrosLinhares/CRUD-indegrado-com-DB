@@ -231,6 +231,38 @@ routes.delete('/alunos/:id', (req,res) => {
     res.status(204).json({})
 })
 
+//rota login
+routes.post('/login', async (req, res) => {
+    try {
+        const email= req.body.email
+        const password = req.body.password
+    
+        if(!email){
+            return res.status(400).json({messagem:'O email é obrigatório'})
+        }
+        if(!password){
+            return res.status(400).json({messagem:'A senha é obrigatória'})   
+        }
+
+        const aluno = await Aluno.findOne({
+            where:{email:email,password:password,password}
+        })
+
+        if(!aluno){
+            return res.status(404).json({messagem:'nenhum aluno corresponde ao email e senha fornecido'})
+        }
+        res.status(200).json("Esse é teu token JWT:Jwt")
+
+
+
+    } catch (error) {
+        console.log(error.message)
+        res.status(500).json({ error: 'Não possível cadastrar o aluno' })
+    }       
+})
+
+
+
 
 
 module.exports = routes
