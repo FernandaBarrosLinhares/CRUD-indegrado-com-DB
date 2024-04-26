@@ -156,7 +156,9 @@ routes.post('/alunos', async (req, res) => {
       
         const nome = req.body.nome
         const data_nascimento = req.body.data_nascimento
-        const celular = req.body.celular
+        const email = req.body.email
+        const password = req.body.password
+       
 
         if (!nome) {
             return res.status(400).json({ message: 'O nome é obrigatório' })
@@ -174,6 +176,8 @@ routes.post('/alunos', async (req, res) => {
            
             nome: nome,
             data_nascimento: data_nascimento,
+            email: email,
+            password:password,
          
         })
 
