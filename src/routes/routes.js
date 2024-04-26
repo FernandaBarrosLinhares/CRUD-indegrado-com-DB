@@ -2,6 +2,8 @@ const {Router} = require('express');
 const Professor = require('../models/Professor')
 const Curso = require('../models/Curso')
 const Aluno = require('../models/Aluno')
+const {sign} = require('jsonwebtoken');
+const { auth } = require('../middleware/auth');
 
 const routes = new Router()
 
@@ -13,7 +15,7 @@ routes.get('/bem_vindo', (req, res) => {
     })
 
 
-routes.post('/cursos', async (req, res) => {
+routes.post('/cursos', auth,async (req, res) => {
     try {
         const nome = req.body.nome
         const duracao_horas = req.body.duracao_horas
@@ -40,7 +42,7 @@ routes.post('/cursos', async (req, res) => {
 
 })
 
-routes.get('/cursos', async (req, res) => {
+routes.get('/cursos', auth, async (req, res) => {
     let params = {}
 
     if(req.query.nome)  {
@@ -54,7 +56,7 @@ routes.get('/cursos', async (req, res) => {
     res.json(cursos)
 })
 
-routes.put('/cursos/:id', async (req, res) => {
+routes.put('/cursos/:id', auth,async (req, res) => {
     const id = req.params.id
 
     const curso = await Curso.findByPk(id)
@@ -69,7 +71,7 @@ routes.put('/cursos/:id', async (req, res) => {
     res.json(curso)
 })
 
-routes.delete('/cursos/:id', (req,res) => {
+routes.delete('/cursos/:id',auth, (req,res) => {
     const {id} =  req.params
 
     Curso.destroy({
@@ -81,7 +83,6 @@ routes.delete('/cursos/:id', (req,res) => {
     res.status(204).json({})
 })
 
-//falta testar
 
 routes.post('/professores', async (req, res) => {
 
@@ -105,7 +106,7 @@ routes.post('/professores', async (req, res) => {
 
 })
 
-routes.get('/professores', async (req, res) => {
+routes.get('/professores',auth, async (req, res) => {
     let params = {}
 
     if(req.query.nome)  {
@@ -119,7 +120,7 @@ routes.get('/professores', async (req, res) => {
     res.json(professores)
 })
 
-routes.put('/professores/:id', async (req, res) => {
+routes.put('/professores/:id', auth,async (req, res) => {
     const id = req.params.id
 
     const professor = await Professor.findByPk(id)
@@ -134,7 +135,7 @@ routes.put('/professores/:id', async (req, res) => {
     res.json(professor)
 })
 
-routes.delete('/professores/:id', (req,res) => {
+routes.delete('/professores/:id', auth,(req,res) => {
     const {id} =  req.params
 
     Professor.destroy({
@@ -190,7 +191,7 @@ routes.post('/alunos', async (req, res) => {
 }
 )
 
-routes.get('/alunos', async (req, res) => {
+routes.get('/alunos',auth, async (req, res) => {
     let params = {}
 
     if(req.query.nome)  {
@@ -204,7 +205,7 @@ routes.get('/alunos', async (req, res) => {
     res.json(alunos)
 })
 
-routes.put('/alunos/:id', async (req, res) => {
+routes.put('/alunos/:id', auth,async (req, res) => {
     const id = req.params.id
 
     const aluno = await Aluno.findByPk(id)
@@ -219,7 +220,7 @@ routes.put('/alunos/:id', async (req, res) => {
     res.json(aluno)
 })
 
-routes.delete('/alunos/:id', (req,res) => {
+routes.delete('/alunos/:id',auth, (req,res) => {
     const {id} =  req.params
 
     Curso.destroy({
@@ -251,7 +252,14 @@ routes.post('/login', async (req, res) => {
         if(!aluno){
             return res.status(404).json({messagem:'nenhum aluno corresponde ao email e senha fornecido'})
         }
-        res.status(200).json("Esse é teu token JWT:Jwt")
+        
+        const payload ={sub:aluno.id,email:aluno.email,nome:aluno.nome}
+
+        console.log(process.env.SECRET_JWT)
+
+        const token = sign(payload, process.env.SECRET_JWT)
+
+        res.status(200).json({Token:token})
 
 
 
