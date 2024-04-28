@@ -4,6 +4,39 @@ const Aluno = require("../models/Aluno")
 class AlunoController{
 
 
+    async listarAluno(req,res){
+        let params = {}
+
+    if(req.query.nome)  {
+        params = {...params, nome: req.query.nome}
+    }
+
+    const alunos = await Aluno.findAll({
+        where: params
+    })
+
+    res.json(alunos)
+    }
+
+    async listarAlunoId(req,res){
+        try {
+            const {id} =req.params
+            const aluno = await Aluno.findByPk(id)
+        
+            if(!aluno){
+                return res.status(404).json({message: "Aluno não encontrado"})
+            }
+            res.json(aluno)
+        
+           } catch (error) {
+            res.status(500).json({
+                error:'Não foi possível listar aluno específico',
+                error:error
+            })
+           }
+
+    }
+    
     async cadastrar(req,res){
         try {
             const nome = req.body.nome
@@ -39,6 +72,34 @@ class AlunoController{
             console.log(error.message)
             res.status(500).json({ error: 'Não possível cadastrar o aluno' })
         }
+
+    }
+
+    async atualizarAluno(req,res){
+        const id = req.params.id
+
+    const aluno = await Aluno.findByPk(id)
+
+    if(!aluno) {
+        return res.status(404).json({mensagem: 'Curso não encontraddo'})
+    }
+    aluno.update(req.body)
+
+    await aluno.save()
+
+    res.json(aluno)
+    }
+
+    async deletarAluno(req,res){
+        const {id} =  req.params
+
+        Curso.destroy({
+            where: {
+                id: id
+            }
+        })
+      
+        res.status(204).json({})
     }
 }
 

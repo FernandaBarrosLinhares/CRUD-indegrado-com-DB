@@ -9,45 +9,15 @@ const alunoRoutes = new Router()
 alunoRoutes.post('/', AlunoController.cadastrar)
 
 
-alunoRoutes.get('/',auth, async (req, res) => {
-    let params = {}
+alunoRoutes.get('/',auth, AlunoController.listarAluno)
 
-    if(req.query.nome)  {
-        params = {...params, nome: req.query.nome}
-    }
 
-    const alunos = await Aluno.findAll({
-        where: params
-    })
+alunoRoutes.get('/:id', auth, AlunoController.listarAlunoId)
 
-    res.json(alunos)
-})
+alunoRoutes.put('/:id',auth, AlunoController.atualizarAluno)
 
-alunoRoutes.put('/:id', auth,async (req, res) => {
-    const id = req.params.id
+alunoRoutes.delete('/:id',auth)
 
-    const aluno = await Aluno.findByPk(id)
 
-    if(!aluno) {
-        return res.status(404).json({mensagem: 'Curso não encontraddo'})
-    }
-    aluno.update(req.body)
-
-    await aluno.save()
-
-    res.json(aluno)
-})
-
-alunoRoutes.delete('/:id',auth, (req,res) => {
-    const {id} =  req.params
-
-    Curso.destroy({
-        where: {
-            id: id
-        }
-    })
-  
-    res.status(204).json({})
-})
 
 module.exports = alunoRoutes
